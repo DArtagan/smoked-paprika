@@ -201,7 +201,8 @@ smoked-paprika/
 - Foundation client: `paprika-recipes` — github.com/coddingtonbear/paprika-recipes (PyPI)
 - Maintained fork (Python 3.11+, current Paprika API, built-in rate limiting): `tieguy/paprika-recipes` — github.com/tieguy/paprika-recipes
 - AI/MCP reference impl: `paprika-3-mcp` — github.com/soggycactus/paprika-3-mcp
-- API spec: mattdsteele gist `7386ec363badfdeaad05a418b9a1f30a`; `github.com/johnwbyrd/kappari`
+- API reverse-engineering write-up (mattdsteele): https://gist.github.com/mattdsteele/7386ec363badfdeaad05a418b9a1f30a
+- API spec: `github.com/johnwbyrd/kappari`
 - Other client (read-only/experimental): `paprika-rs` — github.com/Syfaro/paprika-rs
 
 ## 11. Open choices

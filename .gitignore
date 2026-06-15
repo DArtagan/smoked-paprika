@@ -149,7 +149,8 @@ activemq-data/
 
 # Environments
 .env
-.envrc
+*.env
+# .envrc is intentionally tracked (devenv/direnv loader)
 .venv
 env/
 venv/
@@ -216,3 +217,20 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# paprika-3-mcp smoke-test binary
+.paprika-3-mcp/
+
+# Devenv
+.devenv*
+devenv.local.nix
+devenv.local.yaml
+
+# direnv
+.direnv
+
+# Claude Code plugins
+.claude/plugins/
+
+# pre-commit
+.pre-commit-config.yaml

@@ -15,6 +15,13 @@ A release is a deliberate act: merging a commit to `main` publishes nothing.
    `publish` job then builds the image **from the tag** and pushes
    `ghcr.io/dartagan/smoked-paprika:X.Y.Z`, and `latest`.
 
+Neither tags nor the release branch carry the package name. In
+`release-please-config.json`, `include-component-in-tag` is false and
+`package-name` is absent: release-please names the branch from `package-name`
+whatever the tag setting says, which made 0.1.0's branch
+`release-please--branches--main--components--smoked-paprika`. The python
+strategy reads the name from `pyproject.toml` instead.
+
 Below 1.0, a breaking change bumps the minor version rather than the major, and
 so do `feat` commits; `fix` bumps the patch. For the `python` release type,
 `docs:` commits are releasable too, so a commit that only edits `todos/` uses

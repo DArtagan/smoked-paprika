@@ -15,13 +15,12 @@ Specs are referred to by name, not number, so finishing one renumbers nothing.
 
 | # | spec | what | needs |
 |---|---|---|---|
-| 1 | [release-pipeline](release-pipeline.md) | Package skeleton, devenv hooks, CI, release-please, the image on GHCR | — |
-| 2 | [export-reader](export-reader.md) | Parse an export into the collection; the synthetic fixture generator | release-pipeline |
-| 3 | [upload-receiver](upload-receiver.md) | `POST /exports`: validate, guard against shrinking, swap atomically, keep history | export-reader |
-| 4 | [mcp-tools](mcp-tools.md) | The four read-only tools, over stdio first | export-reader |
-| 5 | [google-auth](google-auth.md) | OAuth through Google, the email allowlist, persistent proxy state | mcp-tools |
-| 6 | [deployment](deployment.md) | The cluster half, the iOS Shortcut, and claude.ai connected end to end | upload-receiver, google-auth |
-| 7 | [metrics](metrics.md) | Last upload time and liveness, so the cluster can remind and alert | deployment |
+| 1 | [export-reader](export-reader.md) | Parse an export into the collection; the synthetic fixture generator | — |
+| 2 | [upload-receiver](upload-receiver.md) | `POST /exports`: validate, guard against shrinking, swap atomically, keep history | export-reader |
+| 3 | [mcp-tools](mcp-tools.md) | The four read-only tools, over stdio first | export-reader |
+| 4 | [google-auth](google-auth.md) | OAuth through Google, the email allowlist, persistent proxy state | mcp-tools |
+| 5 | [deployment](deployment.md) | The cluster half, the iOS Shortcut, and claude.ai connected end to end | upload-receiver, google-auth |
+| 6 | [metrics](metrics.md) | Last upload time and liveness, so the cluster can remind and alert | deployment |
 
 upload-receiver and mcp-tools both need only export-reader, and can be done in
 either order.

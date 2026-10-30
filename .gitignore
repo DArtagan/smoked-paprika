@@ -234,3 +234,9 @@ devenv.local.yaml
 
 # pre-commit
 .pre-commit-config.yaml
+
+# Pulled out of a running system or a real export; may hold anything, recipes included.
+captures/
+
+# Machine-local agent notes
+CLAUDE.local.md

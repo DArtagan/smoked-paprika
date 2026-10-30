@@ -20,16 +20,38 @@ hooks path, publishing from the tag, and `UV_PYTHON_DOWNLOADS=never`. Keep them.
 What does not carry over: the media tools (ffmpeg, chromaprint) and the
 video-share volume.
 
-## State at 2026-10-29
+## Where things stand (2026-10-30)
 
-- `pyproject.toml` is a virtual project with no package, Python `>=3.13`, and
-  pytest as the only dependency. `devenv.nix` enables Python, uv and the `ty` LSP
-  and nothing else: no treefmt, no hooks. Both get replaced.
-- The repository is public on GitHub as `dartagan/smoked-paprika`, default
-  branch `main`.
-- The ignored `.paprika-3-mcp/` and `.paprika.env` are left from the retired
-  sync-API work. `.paprika.env` holds Paprika credentials. Neither is used any
-  more; ask Will before deleting them.
+The scaffold is on the `release-pipeline` branch. Verified locally:
+
+- `devenv test` passes, and pytest, ruff, treefmt and convco each ran on the
+  scaffold's own commit.
+- A commit adding `https://www.` + `paprikaapp.com` to
+  `src/smoked_paprika/web.py` was refused by the pytest hook, which named the
+  file.
+- The image builds, runs as uid 1000, and answers `/healthz` with
+  `{"status":"ok","version":"0.0.0"}`. `POST /mcp` is 404.
+  `docker compose config` accepts the example.
+
+Not yet run: CI on GitHub, the release PR, and publishing to GHCR.
+
+On GitHub, *Allow GitHub Actions to create and approve pull requests* and
+immutable releases were turned on on 2026-10-30, matching reelbarrow.
+`.paprika-3-mcp/` and `.paprika.env`, left from the sync-API work, were
+deleted at Will's word.
+
+## Decisions
+
+- **The host test covers every tracked file except Markdown** (Will,
+  2026-10-30). The README and the design name the host to explain the rule. For
+  that test to guard a commit, the pytest hook runs on any non-Markdown change,
+  not only Python.
+- **`serve` exposes `/healthz` and nothing else.** `FastMCP.http_app()` would
+  also mount `/mcp`, unauthenticated, and the rules forbid that. So the app is
+  a plain Starlette one. FastMCP is pinned at 4.1.4, whose release notes show
+  nothing that bears on this project; 4.2.0a1 is a prerelease. The healthz
+  handler has the shape of a FastMCP `custom_route`, so google-auth can move it
+  across unchanged.
 
 ## Scope
 

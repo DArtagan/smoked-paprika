@@ -1,0 +1,23 @@
+# An example deployment.
+#
+#   docker compose up -d
+services:
+  smoked-paprika:
+    image: ghcr.io/dartagan/smoked-paprika:0.0.0 # x-release-please-version
+    restart: unless-stopped
+    volumes:
+      - data:/data
+    ports:
+      - "8000:8000"
+    healthcheck:
+      # The image has no curl or wget.
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz')
+      interval: 30s
+      start_period: 10s
+
+volumes:
+  data:

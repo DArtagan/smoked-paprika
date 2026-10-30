@@ -218,9 +218,6 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# paprika-3-mcp smoke-test binary
-.paprika-3-mcp/
-
 # Devenv
 .devenv*
 devenv.local.nix

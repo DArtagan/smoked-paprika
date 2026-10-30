@@ -20,17 +20,22 @@ can build on.
 ## How it works
 
 One **core service** holds your Paprika credentials and is the only thing that talks
-to Paprika (over the durable v1 HTTP Basic sync API): it normalises an incoming recipe,
-computes the required hash, gzips it, and multipart-POSTs it. Several thin front-ends
-sit in front of that core:
+to Paprika (over the durable v1 HTTP Basic sync API): it normalises an incoming recipe
+(including the formatting conventions the Paprika app expects), stamps a change-detection
+hash, gzips it, and multipart-POSTs it. Several thin front-ends sit in front of that core:
 
 - **REST API** — `POST /recipes` (structured JSON or a markdown/YAML body), `GET /recipes`, `GET /recipes/{uid}`.
 - **Web UI** — a minimal "Add Recipe" page with structured fields and a paste textarea.
 - **MCP endpoint** — `create_recipe` / `update_recipe` / `search` tools so AI assistants can add recipes from natural language or images.
 
 A server-side backend is mandatory: Paprika sends no CORS headers, so a browser can't
-call it directly. See **[docs/SPEC.md](docs/SPEC.md)** for the full design, the API
-reality, and the build roadmap.
+call it directly.
+
+- **[docs/SPEC.md](docs/SPEC.md)** — full design, architecture, and build roadmap.
+- **[docs/paprika-api.md](docs/paprika-api.md)** — operational notes on Paprika's
+  unofficial API, verified against a live account: endpoints, the full record shape,
+  the text conventions the app expects, and the gotchas (including a hash formula
+  that's widely repeated and wrong).
 
 ## Development
 
@@ -62,6 +67,10 @@ proxies an unofficial API — put it behind a reverse proxy or a private network
 - **Unofficial API** — Paprika's sync API may change or break without notice.
 - **Rate limits / IP bans** — write one recipe at a time; avoid bulk re-uploads.
 - Test writes with a throwaway recipe before any bulk operation.
+- **A successful write isn't proof of a correct recipe on your phone.** The Paprika
+  app has been observed importing an API-written recipe with its paragraph breaks
+  collapsed, even though the server copy was byte-perfect and a force sync didn't
+  fix it. Check a device before trusting a batch.
 
 ## License
 

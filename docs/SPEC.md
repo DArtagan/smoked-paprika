@@ -36,9 +36,12 @@ Paprika's cloud-sync API is undocumented but has been legally reverse-engineered
 - **Read:** `GET /sync/recipes/` → list of `{uid, hash}`;
   `GET /sync/recipe/{uid}/` → full recipe.
 - **Write:** `POST /sync/recipe/{uid}/` where the body is `multipart/form-data`
-  with a `data` field holding **gzip-compressed JSON**. Every field must be
-  present (even if empty). `hash` = sha256 of the JSON with the `hash` field
-  removed and keys sorted. Photos upload as a separate binary field.
+  with a `data` field holding **gzip-compressed JSON** of the *complete* record
+  (a replace, not a merge). Photos upload as a separate binary field.
+- **`hash`:** an opaque change-detection token. It must *change* when content
+  changes so other clients re-download; the server does not validate it. The
+  commonly cited formula (sha256 of the record minus `hash`, keys sorted) is
+  **wrong** — see [`paprika-api.md` §4](paprika-api.md#4-the-hash-field--the-documented-formula-is-wrong).
 - **Constraints:** no CORS headers (a browser cannot call Paprika directly — a
   server-side backend is mandatory); bulk/rapid calls risk IP bans.
 
@@ -46,9 +49,17 @@ Paprika's cloud-sync API is undocumented but has been legally reverse-engineered
 via the token endpoint `POST /api/v1/account/login` (returns a Bearer token) and
 worked without incident in one-off testing — but smoked-paprika's own client will
 still prefer **HTTP Basic on the sync endpoints** as the durable, ban-resistant
-path. Reading paprika-3-mcp's client also corroborated the write format: gzip JSON,
-`hash` = sha256 of the JSON with the `hash` field removed and keys sorted, sent as
-the multipart `data` field.
+path.
+
+**Observed (2026-08-05):** direct HTTP Basic reads and writes with `curl` confirmed
+the auth, endpoints, write format and full 33-field record shape — and disproved
+the hash formula above. Also established the text conventions the app expects
+(`\n\n` between direction steps, never CRLF) and one significant gotcha: **a
+successful write that reads back correctly can still import wrong on the device.**
+
+> **[`docs/paprika-api.md`](paprika-api.md) is the operational reference** — field
+> inventory, formatting rules, verified-vs-unverified claims, and reproduction
+> commands. Consult it before writing client code; this section is only the summary.
 
 These quirks (gzip + multipart + hash; no CORS) are exactly why a backend wrapper
 is worthwhile and why we reuse an existing client rather than hand-roll HTTP.
@@ -177,6 +188,15 @@ smoked-paprika/
   moves into M1.
 - **M1 — Core + REST.** `paprika_client`, `models`, `service`, JSON `POST
   /recipes` + reads. Rate-limit/backoff. Tests for hashing/serialization.
+  Carried in from the 2026-08-05 findings ([`paprika-api.md`](paprika-api.md)):
+  - Support `source` / `source_url` — `paprika-3-mcp` cannot set them, and
+    attribution is core to this service's purpose, not a nice-to-have.
+  - Emit the app's empty-value conventions (`categories: []`, not `null`).
+  - Normalise directions to `\n\n`-separated steps and never emit CRLF; this
+    belongs in the core normaliser so every front-end inherits it.
+  - Treat `hash` as opaque but assert it changed before writing.
+  - Try to derive the canonical hash algorithm, then re-test the device import
+    gotcha (§6 of the API doc) to see whether a correct hash fixes it.
 - **M2 — Parsers.** YAML (reuse `paprika-recipes` shape) and forgiving markdown →
   Recipe, with unit tests.
 - **M3 — Web UI.** Add-Recipe form + paste textarea; submission via the core.
@@ -195,6 +215,11 @@ smoked-paprika/
   to expose publicly.
 - **Validation safety** — test writes with a throwaway recipe (or a spare
   account) before any bulk operation.
+- **A successful write is not proof of a correct recipe on the device** — an
+  externally-written record has been observed importing into the app with its
+  paragraph breaks collapsed, despite the server copy being byte-perfect and
+  surviving a force sync. End-to-end checks must look at a device, not just a
+  read-back. See [`paprika-api.md` §6](paprika-api.md#6-gotcha-correct-server-data-can-still-import-wrong).
 
 ## 10. References
 

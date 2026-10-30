@@ -1,7 +1,7 @@
 [project]
 name = "smoked-paprika"
 # Written by release-please; see docs/releasing.md.
-version = "0.0.0"
+version = "0.1.0"
 description = "A remote MCP server giving Claude read access to a Paprika recipe export"
 license = "MIT"
 requires-python = ">=3.15"

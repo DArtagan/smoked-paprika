@@ -55,28 +55,54 @@ Paprika Recipe Format. Paprika's support guide recommends it as a backup method.
 No Shortcuts action exports recipes. Paprika 4's actions cover grocery lists,
 pantry, meals and links only, so the share sheet is the only route out.
 
-Measured on 2026-10-29 against a Paprika 3 iOS export of 167 recipes:
+Measured on 2026-10-30 against a Paprika 4 beta iOS export of 167 recipes, and
+compared with a Paprika 3 export of the same collection taken the day before:
 
 - A zip of one `.paprikarecipe` entry per recipe, each gzip-compressed JSON.
-  Entry names derive from the recipe name, but 29 of 167 differ from it, so
-  **recipes are keyed by `uid`**, never by entry name.
-- 24 top-level fields: `uid`, `name`, `ingredients`, `directions`, `description`,
+  Entry names derive from the recipe name, but 6 of 167 differ from it: `:` is
+  dropped, edge whitespace is trimmed, and a repeated name gets ` 2`. Two names
+  are repeats, so names are not unique either. **Recipes are keyed by `uid`**,
+  never by entry name.
+- Paprika 4 sets the zip's UTF-8 flag on entry names; Paprika 3 did not, and
+  Python decodes such names as cp437. That mojibake is why the Paprika 3
+  measurement counted 29 names differing.
+- Every entry is stamped with the export time, so **the export's time is read
+  from the zip**, not from the filename the share sheet may drop. Paprika 4
+  stamps UTC; Paprika 3 stamped local time.
+- 25 top-level fields: `uid`, `name`, `ingredients`, `directions`, `description`,
   `notes`, `nutritional_info`, `servings`, `difficulty`, `prep_time`,
   `cook_time`, `total_time`, `source`, `source_url`, `rating` (int), `categories`,
   `created` (`YYYY-MM-DD HH:MM:SS`), `hash`, `image_url`, `photo`, `photo_hash`,
-  `photo_data`, `photo_large`, `photos`. Every value is a string except where
-  noted and the image fields, which can be null.
+  `photo_data`, `photo_large`, `photos`, and `cookbook_uid`, which Paprika 4
+  added and which is null throughout. Every value is a string except where noted
+  and the image fields, which can be null. One recipe, presumably edited in
+  Paprika 4, carries six more: `prep_minutes`, `cook_minutes`, `total_minutes`,
+  `servings_min`, `servings_max`, all null, and `metadata_version` (int).
 - `categories` holds category **names**, not IDs: 13 distinct across the
-  collection. The export has no trash, favourite, pin or cookbook flags.
-  Paprika 4's guide says its exports add cookbook information, which has not
-  been seen yet. Unknown fields are kept and ignored, never rejected.
-- Photos are base64 JPEG in `photo_data` and in `photos[].data`: 12.8 MiB of the
+  collection. The export has no trash, favourite or pin flags. Cookbooks appear
+  only as `cookbook_uid`; nothing in the export names them.
+- **Unknown fields are ignored, never rejected.** Paprika 4 added seven in one
+  version, so rejecting what is unknown would turn every app update into
+  refused uploads. A known field that is missing or null reads as empty.
+- Between the two exports every `uid` and every recipe's `hash` stayed the same.
+- Photos are base64 JPEG in `photo_data` and in `photos[].data`: 12.9 MiB of the
   file, against 0.35 MiB of text. The whole export is 10 MiB compressed.
-- Text conventions: of the 159 non-empty `directions`, 135 separate steps with a
-  blank line and 17 use single newlines only. One contains CRLF. 23
-  `ingredients` use blank lines to group items. Eight recipes have no directions.
+- Text conventions: of the 159 non-empty `directions`, 134 separate steps with a
+  blank line, 18 use single newlines only, and 7 are one line. One contains
+  CRLF. 23 `ingredients` use blank lines to group items. Eight recipes have no
+  directions. 22 of the blank-line recipes and 11 of the single-newline ones
+  number their own steps (`1.`) in the text.
 - **A single-recipe export is structurally identical to a full one**: a zip with
-  one entry. Nothing in the file says which kind it is.
+  one entry. Nothing in the file says which kind it is. This was measured on
+  Paprika 3 and not rechecked on 4.
+
+Directions become steps by one rule. Where any blank line appears, steps are
+the blank-line-separated paragraphs. Otherwise each line is a step, which held
+for every one of the 18 single-newline recipes read: numbered lists, checklists
+and one-sentence-per-line method. One exception, inside a numbered list, was
+a soft-wrapped continuation. So in a list whose first line is numbered, a line
+without a number joins the step before it. Step text is otherwise kept as
+written, numbers included.
 
 ## Replacing the collection
 
@@ -111,8 +137,10 @@ Read-only tools, annotated `readOnlyHint`:
 - **list categories** with their recipe counts.
 - **collection status**: export time, upload time, recipe count.
 
-167 recipes of text fit in memory with room to spare, so search is plain
-in-memory matching. Claude does the fuzzy reasoning; the server finds candidates.
+The 167-recipe collection holds 566 KiB once loaded, with photos dropped.
+Reading it peaks at 5.2 MiB, because entries are read one at a time. Both were
+measured with `tracemalloc` on 2026-10-30. So search is plain in-memory
+matching. Claude does the fuzzy reasoning; the server finds candidates.
 Photos are not served. MCP image results would make that possible later, but
 they are 97% of the export's bytes and no tool needs them yet.
 

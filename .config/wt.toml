@@ -19,12 +19,11 @@ git config --worktree core.hooksPath "$(git rev-parse --absolute-git-dir)/hooks"
 command -v prek >/dev/null 2>&1 && prek install -t pre-commit -t commit-msg || true
 """
 
-# The gitignored files a session relies on: CLAUDE.local.md, and the real
-# exports under captures/. Linked rather than copied, so there is one copy to
-# keep current, and no second copy of anyone's recipes.
+# The real exports under captures/, which are gitignored. Linked rather than
+# copied, so there is one copy to keep current, and no second copy of anyone's
+# recipes.
 local-files = """
 primary=$(git worktree list --porcelain | awk '/^worktree /{print substr($0, 10); exit}')
-[ -e "$primary/CLAUDE.local.md" ] && ln -sfn "$primary/CLAUDE.local.md" CLAUDE.local.md
 [ -d "$primary/captures/exports" ] && mkdir -p captures && ln -sfn "$primary/captures/exports" captures/exports
 true
 """

@@ -11,11 +11,22 @@ Paprika's servers.
 
 ## Development environment
 
-[devenv](https://devenv.sh/) provides Python and uv. `direnv` loads it on `cd`;
-otherwise `devenv shell`.
+[devenv](https://devenv.sh/) provides Python 3.13, uv, `gh`, `jq` and `skopeo`.
+`direnv` loads it on `cd`; otherwise `devenv shell`.
 
-The `release-pipeline` spec replaces this section with the real commands, as
-it did in reelbarrow.
+```bash
+uv add <package>               # a runtime dependency; --group dev for a test one
+pytest                         # the tests
+treefmt                        # format the tree
+devenv test                    # every hook over every tracked file, as CI runs it
+smoked-paprika serve           # the HTTP server on :8000, /healthz only
+```
+
+The hooks are the ones `git commit` runs: treefmt, ruff, pytest, and `convco` on
+the commit message. pytest runs on any change but Markdown, because the test
+that no file names Paprika's host covers every tracked file. Files git does not
+track are invisible to the hooks and to that test; `git add -N` a new file
+first.
 
 ### Working here as an agent
 
@@ -43,14 +54,18 @@ it did in reelbarrow.
 
 Work is specified in [`todos/`](todos/README.md), one self-contained spec per
 step, ordered in that README. A spec's filename without `.md` is its **slug**,
-which names the branch it is worked on. Work lands on `main` through a pull
-request.
+which names the branch it is worked on. Work happens on that branch, in a
+worktree made with `wt switch --create <slug>`, and lands on `main` through a
+pull request. [`.config/wt.toml`](.config/wt.toml) sets the worktree up; a plain
+`git worktree add` skips that and shares git hooks with every other checkout.
 
 When a spec is done, whatever it leaves permanently true goes into `docs/`, and
 the spec is deleted in the same pull request, with a line added to
 [`docs/project_log.md`](docs/project_log.md). A retired slug is never reused.
 
-Commits follow [Conventional Commits](https://www.conventionalcommits.org/).
+Commits follow [Conventional Commits](https://www.conventionalcommits.org/);
+release-please builds versions and the changelog from them. Releasing is in
+[`docs/releasing.md`](docs/releasing.md).
 
 ### The deployment half
 

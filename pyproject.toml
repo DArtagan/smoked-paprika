@@ -1,15 +1,24 @@
 [project]
 name = "smoked-paprika"
+# Written by release-please; see docs/releasing.md.
 version = "0.0.0"
-description = "Self-hostable service for reading and writing Paprika recipes."
-readme = "README.md"
+description = "A remote MCP server giving Claude read access to a Paprika recipe export"
+license = "MIT"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = ["fastmcp>=4.1.4", "uvicorn>=0.32"]
+
+[project.scripts]
+smoked-paprika = "smoked_paprika.cli:main"
 
 [dependency-groups]
-dev = [
-    "pytest>=8",
-]
+dev = ["pytest>=8.3"]
 
-# No [build-system] on purpose: until the package skeleton (M1) lands, uv treats
-# this as a non-package "virtual" project and only manages the environment/deps.
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff.lint]
+extend-select = ["B", "I", "UP"]

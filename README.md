@@ -25,6 +25,7 @@ old that is.
 ## Documentation
 
 - [`docs/design.md`](docs/design.md): the design, and why it is shaped this way
+- [`docs/releasing.md`](docs/releasing.md): how a version is made and published
 - [`todos/`](todos/README.md): the work still to do
 - [`AGENTS.md`](AGENTS.md): how work is done in this repository
 

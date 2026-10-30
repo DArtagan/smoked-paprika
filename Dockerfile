@@ -1,6 +1,6 @@
 FROM ghcr.io/astral-sh/uv:0.13 AS uv
 
-FROM docker.io/library/python:3.13-slim
+FROM docker.io/library/python:3.15-slim
 
 COPY --from=uv /uv /usr/local/bin/uv
 

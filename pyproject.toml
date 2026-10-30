@@ -4,7 +4,7 @@ name = "smoked-paprika"
 version = "0.0.0"
 description = "A remote MCP server giving Claude read access to a Paprika recipe export"
 license = "MIT"
-requires-python = ">=3.13"
+requires-python = ">=3.15"
 dependencies = ["fastmcp>=4.1.4", "uvicorn>=0.32"]
 
 [project.scripts]

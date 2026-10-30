@@ -11,7 +11,7 @@ Paprika's servers.
 
 ## Development environment
 
-[devenv](https://devenv.sh/) provides Python 3.13, uv, `gh`, `jq` and `skopeo`.
+[devenv](https://devenv.sh/) provides Python 3.15, uv, `gh`, `jq` and `skopeo`.
 `direnv` loads it on `cd`; otherwise `devenv shell`.
 
 ```bash

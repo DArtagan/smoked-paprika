@@ -9,8 +9,8 @@ terms forbid third-party access to them and warn that accounts doing it may be
 blocked, so this project works only from files the app itself exports. See
 [the design](docs/design.md#why-an-export-and-never-the-sync-api).
 
-> **Status: design.** Nothing runs yet. The work is specified in
-> [`todos/`](todos/README.md), in order.
+> **Status: scaffold.** The released image answers a health check and nothing
+> more. The work is specified in [`todos/`](todos/README.md), in order.
 
 ## How it works
 

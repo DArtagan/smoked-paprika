@@ -58,6 +58,15 @@ nothing should make the later swap harder than changing configuration.
   which would force a weekly reconnect. Verify the current behaviour before
   choosing between Testing and In production.
 
+## Where it starts
+
+`smoked-paprika serve` runs a plain Starlette app holding `/healthz` alone.
+`FastMCP.http_app()` would have mounted `/mcp` without authentication, which
+the rules forbid. This spec moves the server onto `http_app()` with the
+provider in place, and `/healthz` onto `custom_route`, whose handler shape it
+already has. `tests/test_web.py` asserts that `/mcp` is absent; it changes to
+asserting that `/mcp` refuses a request with no token.
+
 ## Scope
 
 HTTP transport with `GoogleProvider`, the allowlist middleware, the proxy's

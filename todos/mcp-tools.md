@@ -17,8 +17,15 @@ google-auth, never before it.
 
 - The four tools from the design: search, get a recipe, list categories,
   collection status. All are annotated read-only.
+- **The collection** is `smoked_paprika.export.Collection`, read by
+  `read_export`. Recipes already carry their directions as `steps`. Tests build
+  exports with `tests/export_fixtures.py`, which also writes one to a file for
+  trying the tools without a real export.
 - **Output is written for a model to read.** Plain, compact text: a recipe as
   headed sections with numbered steps, search results as one line per recipe.
+  33 recipes number their own steps in the text (`1. …`), so rendering must not
+  number them twice. Two recipe names are repeated, so a search line needs the
+  uid or something else that tells them apart.
   Not raw export JSON. Look at what Claude does with each output in practice,
   then adjust. Over-long outputs cost the conversation; terse ones send Claude
   back for a second call.

@@ -40,7 +40,8 @@ points from upload-receiver here at the latest:
 
 - what Paprika's export puts in the share sheet
 - whether Shortcuts appears there at all
-- whether the filename arrives
+- whether the filename arrives, which carries the export's scope (its time is in
+  the zip)
 - that a 10 MiB upload completes over cellular
 
 Document the Shortcut as steps in `docs/`, with the token as a placeholder.

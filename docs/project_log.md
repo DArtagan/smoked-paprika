@@ -6,3 +6,4 @@ request(s). It is the registry that stops a retired slug from being reused.
 | slug | landed | pull requests |
 |---|---|---|
 | release-pipeline | 2026-10-30 | #1, #2, #3 |
+| export-reader | 2026-10-30 | #4 |

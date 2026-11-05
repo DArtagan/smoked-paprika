@@ -18,8 +18,18 @@
   ([Apple](https://support.apple.com/guide/shortcuts/request-your-first-api-apd58d46713f/ios);
   a worked share-sheet upload is at
   [alikhil.dev](https://alikhil.dev/posts/ios-shortcut-for-microbin/)). Accept
-  one of the two and say which in the docs. Raw is simpler to receive. A form
-  might carry the original filename, which the export metadata wants.
+  one of the two and say which in the docs. Raw is simpler to receive. The
+  export's time is read from the zip itself (the design's *The export*), so the
+  filename matters only for its scope, `All Recipes`. A form might carry it;
+  whether a one-recipe export's filename says something else is unmeasured.
+- **The reader** is `smoked_paprika.export.read_export`, which takes a path or
+  binary file and returns the collection or raises `ExportError`, whose `entry`
+  names the bad entry. It caps entry count and decompressed size, but
+  `zipfile` parses the whole central directory before the entry cap applies.
+  The upload's body cap is what bounds that, so it must be enforced before the
+  reader sees the file.
+- `hash` is stable for an unchanged recipe: all 167 matched between a Paprika 3
+  and a Paprika 4 export taken a day apart.
 - **Unverified:** what Paprika's export hands the share sheet (a file, and with
   what name), and whether Shortcuts appears in that sheet at all. The deployment
   spec checks on the phone. If this spec can be checked sooner against a dev

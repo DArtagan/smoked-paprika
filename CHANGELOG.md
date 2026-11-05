@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/DArtagan/smoked-paprika/compare/v0.1.0...v0.1.1) (2026-11-05)
+
+
+### Documentation
+
+* let a pull request's title decide how it is merged ([#5](https://github.com/DArtagan/smoked-paprika/issues/5)) ([11c93af](https://github.com/DArtagan/smoked-paprika/commit/11c93afd25c063c2d8e12810426d653d06311007))
+
 ## 0.1.0 (2026-10-30)
 
 
